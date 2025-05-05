@@ -18,10 +18,11 @@ class Predictor(BasePredictor):
 
     def preprocess_audio(self, audio_path, max_duration_minutes=30):
         audio = AudioSegment.from_file(audio_path)
-        max_duration_ms = max_duration_minutes * 60 * 1000
-        # 截断音频长度
-        if len(audio) > max_duration_ms:
-            audio = audio[-max_duration_ms:]
+        if max_duration_minutes != 0:
+            max_duration_ms = max_duration_minutes * 60 * 1000
+            # 截取前 max_duration_minutes 分钟
+            if len(audio) > max_duration_ms:
+                audio = audio[:max_duration_ms]
         if audio.channels != 1:
             audio = audio.set_channels(1)
         if audio.frame_rate != 16000:
@@ -33,7 +34,7 @@ class Predictor(BasePredictor):
     def predict(
         self,
         audio: Path = Input(description="输入音频文件 (mp3/wav 都支持)"),
-        max_duration_minutes: int = Input(description="最大处理分钟数，超过部分只保留最后N分钟", default=30),
+        max_duration_minutes: int = Input(description="最大处理分钟数，0为不截断", default=0),
         return_word_timestamps: bool = Input(description="是否返回分词时间戳", default=True),
         return_char_timestamps: bool = Input(description="是否返回分字时间戳", default=False),
     ) -> dict:
