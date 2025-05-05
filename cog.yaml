@@ -6,8 +6,8 @@ build:
   python_version: "3.10"
   run:
     - "pip install --no-cache-dir torch torchvision torchaudio"
-    - "pip install --no-cache-dir pydub \"nemo_toolkit[asr]\" numpy==1.24.3"
-    - "pip install --upgrade nemo_toolkit[all]"
+    - "pip install --no-cache-dir git+https://github.com/NVIDIA/NeMo.git@main"
+    - "pip install --no-cache-dir pydub numpy==1.24.3"
     # 预下载NeMo模型权重
     - "python3 -c \"import nemo.collections.asr as nemo_asr; nemo_asr.models.ASRModel.from_pretrained(model_name='nvidia/parakeet-tdt-0.6b-v2')\""
 predict: "predict.py:Predictor"
