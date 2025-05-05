@@ -51,9 +51,6 @@ class Predictor(BasePredictor):
         }
         if hasattr(output[0], "timestamp") and "segment" in output[0].timestamp:
             for seg in output[0].timestamp["segment"]:
-                # 跳过空字符串
-                if not seg["segment"]:
-                    continue
                 result["segments"].append({
                     "start": seg["start"],
                     "end": seg["end"],
