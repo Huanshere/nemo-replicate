@@ -6,6 +6,9 @@ build:
   python_version: "3.10"
   run:
     - "pip install --no-cache-dir torch torchvision torchaudio"
+    # 很奇怪的安装 官方 2025-05-29 修的 bug 还没发版，直接 pip install 后续会有word对齐失败的可能
+    - "pip install nemo_toolkit[asr]"
+    - "pip uninstall nemo_toolkit"
     - "pip install --no-cache-dir git+https://github.com/NVIDIA/NeMo.git@main"
     - "pip install --no-cache-dir pydub numpy==1.24.3"
     # 预下载NeMo模型权重
