@@ -9,7 +9,7 @@ from cog import BasePredictor, Input, Path
 class Predictor(BasePredictor):
     def setup(self):
         """仅在容器启动时运行一次"""
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         # ─ ASR ─
         self.asr_model = nemo_asr.models.ASRModel.from_pretrained(
