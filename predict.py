@@ -43,7 +43,7 @@ class Predictor(BasePredictor):
         if self.dia_model is None:
             self.dia_model = Pipeline.from_pretrained(
                 "pyannote/speaker-diarization-3.1",
-                use_auth_token="Optional Token",
+                use_auth_token="YOUR_HF_TOKEN_HERE",
             ).to(self.device)
 
     # ────────────────────────── 主要入口 ──────────────────────────
