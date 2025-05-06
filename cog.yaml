@@ -1,4 +1,3 @@
-# ───── cog.yaml ──────────────────────────────────────────────────────────────
 build:
   gpu: true
   cuda: "11.8"
@@ -17,17 +16,6 @@ build:
     # ─ Speaker Diarization ─
     - "pip install --no-cache-dir 'pyannote.audio>=3.1'"
     # ─ 预下载模型权重 ─
-    - |
-      python - << 'PY'
-      import os
-      import nemo.collections.asr as nemo_asr
-      from pyannote.audio import Pipeline
-
-      # NeMo ASR
-      nemo_asr.models.ASRModel.from_pretrained(model_name="nvidia/parakeet-tdt-0.6b-v2")
-
-      # Pyannote speaker‑diarization
-      Pipeline.from_pretrained("pyannote/speaker-diarization-3.1",
-                                use_auth_token="hf_token")
-      PY
+    - "python -c 'import nemo.collections.asr as nemo_asr; nemo_asr.models.ASRModel.from_pretrained(model_name=\"nvidia/parakeet-tdt-0.6b-v2\")'"
+    - "python -c 'from pyannote.audio import Pipeline; Pipeline.from_pretrained(\"pyannote/speaker-diarization-3.1\", use_auth_token=\"optional token\")'"
 predict: "predict.py:Predictor"
