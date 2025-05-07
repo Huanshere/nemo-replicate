@@ -24,8 +24,6 @@ MIN_SPEECH_MS = 500         # 过滤短语音阈值 (毫秒)
 MERGE_GAP_SEC = 2.0         # 合并相邻语音段最大间隔 (秒)
 
 class Predictor(BasePredictor):
-    """Replicate Cog Predictor with VAD + optional Speaker Diarization"""
-
     # ────────────────────────── 初始化 ──────────────────────────
     def setup(self):
         """仅在容器启动时运行一次"""
@@ -48,13 +46,9 @@ class Predictor(BasePredictor):
 
     # ────────────────────────── 音频预处理 ──────────────────────────
     @staticmethod
-    def _preprocess_audio(audio_path: str, max_duration_minutes: int = 0) -> Tuple[str, AudioSegment]:
-        """转单声道 / 16‑kHz / 16‑bit PCM WAV，并可截断时长"""
+    def _preprocess_audio(audio_path: str) -> Tuple[str, AudioSegment]:
+        """转单声道 / 16‑kHz / 16‑bit PCM WAV"""
         audio = AudioSegment.from_file(audio_path)
-        if max_duration_minutes:
-            max_ms = max_duration_minutes * 60 * 1000
-            if len(audio) > max_ms:
-                audio = audio[: max_ms]
         # 确保采样率/声道
         audio = audio.set_channels(1).set_frame_rate(16000)
         wav_path = "temp_full_{}.wav".format(uuid.uuid4().hex[:8])
@@ -141,7 +135,6 @@ class Predictor(BasePredictor):
     def predict(
         self,
         audio: Path = Input(description="输入音频文件 (mp3/wav)"),
-        max_duration_minutes: int = Input(description="最大处理分钟数，0 为不截断", default=0),
         max_segment_minutes: int = Input(description="单块语音最大分钟数", default=20),
         return_word_timestamps: bool = Input(description="是否返回分词时间戳", default=True),
         speaker_diarization: bool = Input(description="是否执行说话人分离", default=False),
@@ -150,7 +143,7 @@ class Predictor(BasePredictor):
     ) -> Dict:
 
         # ─ 1. 预处理 ─
-        wav_path, audio_seg = self._preprocess_audio(str(audio), max_duration_minutes)
+        wav_path, audio_seg = self._preprocess_audio(str(audio))
         duration_sec = len(audio_seg) / 1000.0
         
         # 计算最大分段秒数
@@ -158,7 +151,7 @@ class Predictor(BasePredictor):
 
         # ─ 2. VAD 切块 ─
         blocks = self._vad_chunk(audio_seg, max_seg_sec)
-        # 若未检测到语音，则用整段
+        # 若未检测到语音则使用整块
         if not blocks:
             blocks = [(wav_path, 0.0)]
 
