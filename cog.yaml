@@ -11,8 +11,7 @@ build:
     - "pip install nemo_toolkit[asr]"
     - "pip uninstall nemo_toolkit -y"
     - "pip install --no-cache-dir git+https://github.com/NVIDIA/NeMo.git@main"
-    # 其余依赖
-    - "pip install --no-cache-dir pydub numpy==1.24.3 pandas"
+    - "pip install --no-cache-dir pydub webrtcvad numpy==1.24.3 pandas"
     # ─ Speaker Diarization ─
     - "pip install --no-cache-dir 'pyannote.audio>=3.1'"
     # ─ 预下载模型权重 ─
