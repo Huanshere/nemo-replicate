@@ -135,7 +135,7 @@ class Predictor(BasePredictor):
     def predict(
         self,
         audio: Path = Input(description="输入音频文件 (mp3/wav)"),
-        max_segment_minutes: int = Input(description="单块语音最大分钟数", default=20),
+        vad_max_segment_minutes: int = Input(description="VAD检测后单个语音块最大分钟数", default=20),
         return_word_timestamps: bool = Input(description="是否返回分词时间戳", default=True),
         speaker_diarization: bool = Input(description="是否执行说话人分离", default=False),
         min_speakers: int = Input(description="最少说话人，-1 表示不指定", default=-1),
@@ -147,7 +147,7 @@ class Predictor(BasePredictor):
         duration_sec = len(audio_seg) / 1000.0
         
         # 计算最大分段秒数
-        max_seg_sec = max_segment_minutes * 60
+        max_seg_sec = vad_max_segment_minutes * 60
 
         # ─ 2. VAD 切块 ─
         blocks = self._vad_chunk(audio_seg, max_seg_sec)
